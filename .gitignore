@@ -1,0 +1,18 @@
+# Xcode
+DerivedData/
+build/
+*.xcuserdata
+*.xcuserstate
+
+# SwiftPM
+.swiftpm/
+.build/
+
+# Cocoapods
+Pods/
+
+# Archives
+*.xcarchive
+*.ipa
+*.dSYM.zip
+*.dSYM
