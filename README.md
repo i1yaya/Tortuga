@@ -18,7 +18,7 @@ This app is built with **UIKit** and showcases a collection of fun, casual games
    
 - Clean and intuitive interface
 - Smooth animations and interactive gameplay
-- Designed for iOS 16+ with UIKit
+- Designed for iOS 13.0+ with UIKit
 
 ---
 
