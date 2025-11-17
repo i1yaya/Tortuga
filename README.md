@@ -1,32 +1,30 @@
 # Tortuga 🎲
 
 **Tortuga** is an iOS app that includes several mini-games, one of which is **Dice Poker**.  
-This app is built with **SwiftUI** and showcases a collection of fun, casual games.
+This app is built with **UIKit** and showcases a collection of fun, casual games.
 
-![Tortuga Banner](Screenshots/mainMenu.png)
+![Main Menu](Screenshots/mainMenu.png)
+![How to Play](Screenshots/howToPlay.png)
 
 ---
 
 ## 🎮 Features
 
-- Multiple mini-games in one app
-- Dice Poker: test your luck and strategy
+- Multiple mini-games in one app:
+1. Dice Poker (Yatzy)
+2. The Battle
+3. Roll Dice
+4. Fortune Wheel
+   
 - Clean and intuitive interface
 - Smooth animations and interactive gameplay
-- Designed for iOS 16+ with SwiftUI
+- Designed for iOS 16+ with UIKit
 
 ---
 
 ## 🖼 Screenshots
 
-![Dice Poker](assets/dice_poker.png)
-![Another Mini-Game](assets/mini_game.png)
-![Gameplay Gif](assets/gameplay.gif)
-
----
-
-## ⚡ Installation
-
-1. Clone the repository:
-   ```bash
-   git clone git@github.com:i1yaya/Tortuga.git
+![Dice Poker](assets/dicePoker.png)
+![The Battle](assets/theBattle.png)
+![Roll Dice](assets/rollDice.png)
+![Fortune Wheel](assets/fortuneWheel.png)
