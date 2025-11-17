@@ -24,7 +24,7 @@ This app is built with **UIKit** and showcases a collection of fun, casual games
 
 ## 🖼 Screenshots
 
-![Dice Poker](assets/dicePoker.png)
-![The Battle](assets/theBattle.png)
-![Roll Dice](assets/rollDice.png)
-![Fortune Wheel](assets/fortuneWheel.png)
+![Dice Poker](Screenshots/dicePoker.png)
+![The Battle](Screenshots/theBattle.png)
+![Roll Dice](Screenshots/rollDice.png)
+![Fortune Wheel](Screenshots/fortuneWheel.png)
