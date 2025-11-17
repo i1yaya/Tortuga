@@ -2,8 +2,10 @@ import UIKit
 
 class MainViewController: UIViewController {
   private var mainView: MainView!
+  private let device = UIDevice()
   
   private var soundPosition: CGFloat = 0.0
+  private var soundOff: Bool = false
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
@@ -19,8 +21,45 @@ class MainViewController: UIViewController {
     setupTargets()
     setupDelegate()
     
+    getData()
+    getVolume()
+    
     animateGameInfo(entrySize: 0.01, entryDuration: 0.01)
     animateHowToPlay(entrySize: 1.0, entryDuration: 0.01, entryPosition: 65)
+  }
+  
+  private func getData() {
+    if CGFloat(UserDefaults.standard.double(forKey: "sound")) >= 100 {
+      soundPosition = CGFloat(UserDefaults.standard.double(forKey: "sound"))
+    }
+    
+    if UserDefaults.standard.string(forKey: "name") != nil {
+      MainData.shared.nickname = UserDefaults.standard.string(forKey: "name")!
+      mainView.helloLabel.text = "Ahoy, \(MainData.shared.nickname)!"
+    }
+    
+    if UserDefaults.standard.integer(forKey: "coin") != 0 {
+      MainData.shared.coins = UserDefaults.standard.integer(forKey: "coin")
+    } else {
+      MainData.shared.coins = 1000
+    }
+  }
+  
+  private func getVolume() {
+    SoundPlayer.shared.volumeEnable = UserDefaults.standard.bool(forKey: "soundEnable")
+    soundOff = UserDefaults.standard.bool(forKey: "boolSound")
+    
+    if UserDefaults.standard.float(forKey: "volume") != 0.0 {
+      MusicPlayer.shared.audioPlayer?.volume = UserDefaults.standard.float(forKey: "volume")
+    } else if !soundOff {
+      MusicPlayer.shared.audioPlayer?.volume = 0.65
+    } else {
+      MusicPlayer.shared.audioPlayer?.volume = 0.0
+    }
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
   }
   
   private func setupController() {
@@ -50,6 +89,8 @@ class MainViewController: UIViewController {
     mainView.gameInfoBackButton.addTarget(self, action: #selector(gameInfoBackAction), for: .touchUpInside)
     mainView.playButton.addTarget(self, action: #selector(playAction), for: .touchUpInside)
     mainView.nickNameEdit.addTarget(self, action: #selector(setupNickName), for: .touchUpInside)
+    mainView.noMoneyBackButton.addTarget(self, action: #selector(noMoneyBackAction), for: .touchUpInside)
+    mainView.noMoneyButton.addTarget(self, action: #selector(noMoneyMenuAction), for: .touchUpInside)
     
     let gameButtons = [mainView.yatzyButton, mainView.battleButton, mainView.diceButton, mainView.wheelButton]
     
@@ -145,6 +186,20 @@ class MainViewController: UIViewController {
     case 3:
       mainView.wheelMark.isHidden = false
       DispatchQueue.main.asyncAfter(deadline: .now() + 1.25) { [weak self] in
+        
+        if MainData.shared.coins < 1000 {
+          self?.mainView.hard0.isHidden = false
+          self?.mainView.hard1.isHidden = false
+        }
+        if MainData.shared.coins < 500 {
+          self?.mainView.medium0.isHidden = false
+          self?.mainView.medium1.isHidden = false
+        }
+        if MainData.shared.coins < 250 {
+          self?.mainView.light0.isHidden = false
+          self?.mainView.light1.isHidden = false
+        }
+        
         self?.mainView.lightButton.isHidden = false
         self?.mainView.mediumButton.isHidden = false
         self?.mainView.hardButton.isHidden = false
@@ -179,6 +234,12 @@ class MainViewController: UIViewController {
     mainView.lightButton.isHidden = true
     mainView.mediumButton.isHidden = true
     mainView.hardButton.isHidden = true
+    mainView.hard0.isHidden = true
+    mainView.hard1.isHidden = true
+    mainView.medium0.isHidden = true
+    mainView.medium1.isHidden = true
+    mainView.light0.isHidden = true
+    mainView.light1.isHidden = true
     
     editButtons(value: true)
     
@@ -197,25 +258,70 @@ class MainViewController: UIViewController {
     switch sender.tag {
     case 0:
       navigationController?.pushViewController(YatzyViewController(), animated: true)
+      gameInfoBackAction()
     case 1:
       navigationController?.pushViewController(BattleViewController(), animated: true)
+      gameInfoBackAction()
     case 2:
       navigationController?.pushViewController(DiceViewController(), animated: true)
+      gameInfoBackAction()
     case 7:
-      let viewController = WheelViewController()
-      viewController.selected = 0
-      navigationController?.pushViewController(viewController, animated: true)
+      if MainData.shared.coins >= 250 {
+        let viewController = WheelViewController()
+        viewController.selected = 0
+        navigationController?.pushViewController(viewController, animated: true)
+        gameInfoBackAction()
+      } else {
+        mainView.noMoneyImage.image = UIImage(named: "NoMoneyImage0")
+        mainView.noMoneyImage.isHidden = false
+        mainView.noMoneyButton.isHidden = false
+        mainView.noMoneyGround.isHidden = false
+        mainView.noMoneyBackButton.isHidden = false
+      }
     case 8:
-      let viewController = WheelViewController()
-      viewController.selected = 1
-      navigationController?.pushViewController(viewController, animated: true)
+      if MainData.shared.coins >= 500 {
+        let viewController = WheelViewController()
+        viewController.selected = 1
+        navigationController?.pushViewController(viewController, animated: true)
+        gameInfoBackAction()
+      } else {
+        mainView.noMoneyImage.image = UIImage(named: "NoMoneyImage1")
+        mainView.noMoneyImage.isHidden = false
+        mainView.noMoneyButton.isHidden = false
+        mainView.noMoneyGround.isHidden = false
+        mainView.noMoneyBackButton.isHidden = false
+      }
     case 9:
-      let viewController = WheelViewController()
-      viewController.selected = 2
-      navigationController?.pushViewController(viewController, animated: true)
+      if MainData.shared.coins >= 1000 {
+        let viewController = WheelViewController()
+        viewController.selected = 2
+        navigationController?.pushViewController(viewController, animated: true)
+        gameInfoBackAction()
+      } else {
+        mainView.noMoneyImage.image = UIImage(named: "NoMoneyImage2")
+        mainView.noMoneyImage.isHidden = false
+        mainView.noMoneyButton.isHidden = false
+        mainView.noMoneyGround.isHidden = false
+        mainView.noMoneyBackButton.isHidden = false
+      }
     default:
       print("Error: unowned tag")
     }
+  }
+  
+  @objc func noMoneyBackAction() {
+    mainView.noMoneyImage.isHidden = true
+    mainView.noMoneyButton.isHidden = true
+    mainView.noMoneyGround.isHidden = true
+    mainView.noMoneyBackButton.isHidden = true
+  }
+  
+  @objc func noMoneyMenuAction() {
+    mainView.noMoneyImage.isHidden = true
+    mainView.noMoneyButton.isHidden = true
+    mainView.noMoneyGround.isHidden = true
+    mainView.noMoneyBackButton.isHidden = true
+    gameInfoBackAction()
   }
   
   private func editButtons(value: Bool) {
@@ -278,15 +384,26 @@ class MainViewController: UIViewController {
       }
       
       if soundPosition <= mainView.soundLine.frame.minX + 10 {
-        MusicPlayer.shared.volumeEnable = false
+        soundOff = true
+        MusicPlayer.shared.audioPlayer?.volume = 0.0
         SoundPlayer.shared.volumeEnable = false
-        MusicPlayer.shared.backgroundMusic()
-      } else {
-        MusicPlayer.shared.volumeEnable = true
+      } else if soundPosition <= mainView.soundLine.frame.midX {
+        soundOff = false
+        MusicPlayer.shared.audioPlayer?.volume = Float(soundPosition / 1000)
         SoundPlayer.shared.volumeEnable = true
-        MusicPlayer.shared.backgroundMusic()
+      } else {
+        soundOff = false
+        MusicPlayer.shared.audioPlayer?.volume = Float((soundPosition / 700) * 1.5)
+        SoundPlayer.shared.volumeEnable = true
       }
+      print(Float((soundPosition / 700) * 1.5))
+      UserDefaults.standard.set((MusicPlayer.shared.audioPlayer?.volume)!, forKey: "volume")
+      UserDefaults.standard.set(soundOff, forKey: "boolSound")
     }
+    let sound = Double(soundPosition)
+    
+    UserDefaults.standard.set(sound, forKey: "sound")
+    UserDefaults.standard.set(SoundPlayer.shared.volumeEnable, forKey: "soundEnable")
   }
 }
 
@@ -298,8 +415,13 @@ extension MainViewController: UITextFieldDelegate {
   }
   
   func textFieldDidEndEditing(_ textField: UITextField) {
+    if textField.text == "" || textField.text == nil {
+      textField.text = MainData.shared.nickname
+    }
+    
     if textField.text != nil {
       MainData.shared.nickname = textField.text!
+      UserDefaults.standard.set(MainData.shared.nickname, forKey: "name")
       mainView.helloLabel.text = "Ahoy, \(MainData.shared.nickname)!"
       mainView.nickName.text = "\(MainData.shared.nickname)"
       

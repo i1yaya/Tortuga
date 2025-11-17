@@ -4,7 +4,7 @@ import AVFoundation
 class SoundPlayer {
   static let shared = SoundPlayer()
   var audioPlayer: AVAudioPlayer?
-  var volumeEnable = true
+  var volumeEnable: Bool = true
   
   func wheelSound() {
     if volumeEnable {

@@ -87,22 +87,26 @@ class DiceViewController: UIViewController {
   }
   
   @objc func rollAction() {
-    diceView.ground.isHidden = false
-    diceView.rollButton.isHidden = true
-    
-    diceView.betCount.isEnabled = false
-    diceView.bidButton.isHidden = false
-    diceView.bidGround.isHidden = false
-    diceView.cubeGround.isHidden = false
-    diceView.countGround.isHidden = false
-    diceView.cubeUpButton.isHidden = false
-    diceView.cubeDownButton.isHidden = false
-    diceView.countUpButton.isHidden = false
-    diceView.countDownButton.isHidden = false
-    diceView.count.isHidden = false
-    diceView.cube.isHidden = false
-    
-    getBet()
+    if diceView.betCount.text != nil && Int(diceView.betCount.text!) != nil {
+      if MainData.shared.coins > 0 && Int(diceView.betCount.text!)! != 0 {
+        diceView.ground.isHidden = false
+        diceView.rollButton.isHidden = true
+        
+        diceView.betCount.isEnabled = false
+        diceView.bidButton.isHidden = false
+        diceView.bidGround.isHidden = false
+        diceView.cubeGround.isHidden = false
+        diceView.countGround.isHidden = false
+        diceView.cubeUpButton.isHidden = false
+        diceView.cubeDownButton.isHidden = false
+        diceView.countUpButton.isHidden = false
+        diceView.countDownButton.isHidden = false
+        diceView.count.isHidden = false
+        diceView.cube.isHidden = false
+        
+        getBet()
+      }
+    }
   }
   
   @objc func bidAction() {
@@ -226,6 +230,7 @@ class DiceViewController: UIViewController {
     }
     
     animateResult(entrySize: 10, entryDuration: 1.5)
+    UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
   }
   
   @objc func upCube() {
@@ -234,7 +239,7 @@ class DiceViewController: UIViewController {
     } else {
       cube = 0
     }
-    diceView.cube.image = UIImage(named: "Cube\(cube)")
+    diceView.cube.image = UIImage(named: "Dice\(cube)")
   }
   
   @objc func downCube() {
@@ -243,7 +248,7 @@ class DiceViewController: UIViewController {
     } else {
       cube = 5
     }
-    diceView.cube.image = UIImage(named: "Cube\(cube)")
+    diceView.cube.image = UIImage(named: "Dice\(cube)")
   }
   
   @objc func upCount() {
@@ -325,10 +330,10 @@ class DiceViewController: UIViewController {
   }
   
   private func setupStartBet() {
-    if MainData.shared.coins < 1000 {
+    if MainData.shared.coins < 100 {
       diceView.betCount.text = "\(MainData.shared.coins)"
     } else {
-      diceView.betCount.text = "1000"
+      diceView.betCount.text = "100"
     }
   }
   
@@ -339,6 +344,7 @@ class DiceViewController: UIViewController {
       MainData.shared.coins -= DiceData.shared.diceBet
       setupBalance()
     }
+    UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
   }
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

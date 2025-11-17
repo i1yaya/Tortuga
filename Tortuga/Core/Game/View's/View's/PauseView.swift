@@ -69,10 +69,10 @@ class PauseView: UIView {
       menuButton.centerXAnchor.constraint(equalTo: centerXAnchor),
       menuButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
       
-      replayButton.rightAnchor.constraint(equalTo: centerXAnchor, constant: -10),
+      replayButton.leftAnchor.constraint(equalTo: centerXAnchor, constant: 10),
       replayButton.centerYAnchor.constraint(equalTo: centerYAnchor),
       
-      resumeButton.leftAnchor.constraint(equalTo: centerXAnchor, constant: 10),
+      resumeButton.rightAnchor.constraint(equalTo: centerXAnchor, constant: -10),
       resumeButton.centerYAnchor.constraint(equalTo: centerYAnchor)
     ]
     NSLayoutConstraint.activate(constraints)

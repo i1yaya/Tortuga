@@ -1,6 +1,8 @@
 import UIKit
 
 class YatzyView: UIView {
+  private let device = UIDevice()
+  
   public let background: UIImageView = {
     let image = UIImage(named: "YatzyBackground")
     let imageView = UIImageView(image: image)
@@ -157,7 +159,7 @@ class YatzyView: UIView {
   
   public let balanceLabel: UILabel = {
     let label = UILabel()
-    label.text = "27 500"
+    label.text = "\(MainData.shared.coins)"
     label.font = UIFont(name: "Papyrus", size: 16)
     label.textColor = #colorLiteral(red: 0.4468473792, green: 0.3058497608, blue: 0.1608744562, alpha: 1)
     label.textAlignment = .right
@@ -174,7 +176,7 @@ class YatzyView: UIView {
   
   public let betCount: UITextField = {
     let textField = UITextField()
-    textField.text = "1000"
+    textField.text = "100"
     textField.translatesAutoresizingMaskIntoConstraints = false
     textField.backgroundColor = .clear
     textField.borderStyle = .none
@@ -211,6 +213,14 @@ class YatzyView: UIView {
     imageView.setBackgroundImage(image, for: .normal)
     imageView.translatesAutoresizingMaskIntoConstraints = false
     imageView.isHidden = true
+    return imageView
+  }()
+  
+  public let yatzyBackButton: UIButton = {
+    let image = UIImage(named: "BackButton")
+    let imageView = UIButton()
+    imageView.setBackgroundImage(image, for: .normal)
+    imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView
   }()
   
@@ -382,6 +392,193 @@ class YatzyView: UIView {
     addSubview(scoreLeft)
     addSubview(scoreRight)
     addSubview(scoreCount)
+    addSubview(yatzyBackButton)
+    
+    if device.model == .iPhone8 {
+      let constraints = [
+        list.rightAnchor.constraint(equalTo: rightAnchor, constant: 25),
+        list.centerYAnchor.constraint(equalTo: centerYAnchor),
+        
+        rollButton.leftAnchor.constraint(equalTo: leftAnchor, constant: -50),
+        rollButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+        
+        ground.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ground.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        helpButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        helpButton.topAnchor.constraint(equalTo: pauseButton.bottomAnchor, constant: 12),
+        
+        player4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: 40),
+        player4.bottomAnchor.constraint(equalTo: ground.bottomAnchor, constant: -50),
+        
+        enemy4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: 40),
+        enemy4.topAnchor.constraint(equalTo: ground.topAnchor, constant: 50),
+        
+        comboGround.centerYAnchor.constraint(equalTo: centerYAnchor),
+        comboGround.centerXAnchor.constraint(equalTo: centerXAnchor),
+        comboGround.widthAnchor.constraint(equalToConstant: 638 * 0.85),
+        comboGround.heightAnchor.constraint(equalToConstant: 364 * 0.85),
+        
+        backButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        rightButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+        rightButton.leftAnchor.constraint(equalTo: comboGround.rightAnchor),
+        
+        yatzyBackButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        yatzyBackButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else if device.model == .iPhone8Plus {
+      let constraints = [
+        list.rightAnchor.constraint(equalTo: rightAnchor, constant: 25),
+        list.centerYAnchor.constraint(equalTo: centerYAnchor),
+        
+        rollButton.leftAnchor.constraint(equalTo: leftAnchor, constant: -50),
+        rollButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+        
+        ground.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ground.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        helpButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        helpButton.topAnchor.constraint(equalTo: pauseButton.bottomAnchor, constant: 12),
+        
+        player4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: 0),
+        player4.bottomAnchor.constraint(equalTo: ground.bottomAnchor, constant: -50),
+        
+        enemy4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: 0),
+        enemy4.topAnchor.constraint(equalTo: ground.topAnchor, constant: 50),
+        
+        comboGround.centerYAnchor.constraint(equalTo: centerYAnchor),
+        comboGround.centerXAnchor.constraint(equalTo: centerXAnchor),
+        comboGround.widthAnchor.constraint(equalToConstant: 638 * 0.85),
+        comboGround.heightAnchor.constraint(equalToConstant: 364 * 0.85),
+        
+        backButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        rightButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+        rightButton.leftAnchor.constraint(equalTo: comboGround.rightAnchor),
+        
+        yatzyBackButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        yatzyBackButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else if device.model == .iPhone11 {
+      let constraints = [
+        list.rightAnchor.constraint(equalTo: rightAnchor, constant: -50),
+        list.centerYAnchor.constraint(equalTo: centerYAnchor),
+        
+        ground.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ground.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 35),
+        
+        rollButton.leftAnchor.constraint(equalTo: leftAnchor),
+        rollButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+        
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        helpButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        helpButton.topAnchor.constraint(equalTo: pauseButton.bottomAnchor, constant: 12),
+        
+        player4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: -10),
+        player4.bottomAnchor.constraint(equalTo: ground.bottomAnchor, constant: -50),
+        
+        enemy4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: -10),
+        enemy4.topAnchor.constraint(equalTo: ground.topAnchor, constant: 50),
+        
+        comboGround.centerYAnchor.constraint(equalTo: centerYAnchor),
+        comboGround.centerXAnchor.constraint(equalTo: centerXAnchor),
+        
+        backButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        rightButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+        rightButton.leftAnchor.constraint(equalTo: comboGround.rightAnchor),
+        
+        yatzyBackButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        yatzyBackButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else if device.model == .iPhone14ProMax || device.model == .iPhone12Pro {
+      let constraints = [
+        list.rightAnchor.constraint(equalTo: rightAnchor, constant: -60),
+        list.centerYAnchor.constraint(equalTo: centerYAnchor),
+        
+        ground.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ground.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 75),
+        
+        rollButton.leftAnchor.constraint(equalTo: leftAnchor),
+        rollButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+        
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        helpButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        helpButton.topAnchor.constraint(equalTo: pauseButton.bottomAnchor, constant: 12),
+        
+        player4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: -10),
+        player4.bottomAnchor.constraint(equalTo: ground.bottomAnchor, constant: -50),
+        
+        enemy4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: -10),
+        enemy4.topAnchor.constraint(equalTo: ground.topAnchor, constant: 50),
+        
+        comboGround.centerYAnchor.constraint(equalTo: centerYAnchor),
+        comboGround.centerXAnchor.constraint(equalTo: centerXAnchor),
+        
+        backButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        rightButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+        rightButton.leftAnchor.constraint(equalTo: comboGround.rightAnchor),
+        
+        yatzyBackButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        yatzyBackButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else {
+      let constraints = [
+        list.rightAnchor.constraint(equalTo: rightAnchor, constant: -25),
+        list.centerYAnchor.constraint(equalTo: centerYAnchor),
+        
+        ground.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ground.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        
+        rollButton.leftAnchor.constraint(equalTo: leftAnchor),
+        rollButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+        
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        helpButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        helpButton.topAnchor.constraint(equalTo: pauseButton.bottomAnchor, constant: 12),
+        
+        player4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: -10),
+        player4.bottomAnchor.constraint(equalTo: ground.bottomAnchor, constant: -50),
+        
+        enemy4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: -10),
+        enemy4.topAnchor.constraint(equalTo: ground.topAnchor, constant: 50),
+        
+        comboGround.centerYAnchor.constraint(equalTo: centerYAnchor),
+        comboGround.centerXAnchor.constraint(equalTo: centerXAnchor),
+        
+        backButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        rightButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+        rightButton.leftAnchor.constraint(equalTo: comboGround.rightAnchor),
+        
+        yatzyBackButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        yatzyBackButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    }
     
     let constraints = [
       background.rightAnchor.constraint(equalTo: rightAnchor),
@@ -389,28 +586,10 @@ class YatzyView: UIView {
       background.topAnchor.constraint(equalTo: topAnchor),
       background.bottomAnchor.constraint(equalTo: bottomAnchor),
       
-      ground.centerYAnchor.constraint(equalTo: centerYAnchor),
-      ground.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
-      
-      list.rightAnchor.constraint(equalTo: rightAnchor, constant: -25),
-      list.centerYAnchor.constraint(equalTo: centerYAnchor),
-      
       collectionView.rightAnchor.constraint(equalTo: list.rightAnchor),
       collectionView.leftAnchor.constraint(equalTo: list.leftAnchor),
       collectionView.topAnchor.constraint(equalTo: list.topAnchor, constant: -6.5),
       collectionView.bottomAnchor.constraint(equalTo: list.bottomAnchor),
-      
-      rollButton.leftAnchor.constraint(equalTo: leftAnchor),
-      rollButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-      
-      pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
-      pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-      
-      helpButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
-      helpButton.topAnchor.constraint(equalTo: pauseButton.bottomAnchor, constant: 12),
-      
-      player4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: -10),
-      player4.bottomAnchor.constraint(equalTo: ground.bottomAnchor, constant: -50),
       
       player3.rightAnchor.constraint(equalTo: player4.leftAnchor, constant: -10),
       player3.bottomAnchor.constraint(equalTo: ground.bottomAnchor, constant: -50),
@@ -423,9 +602,6 @@ class YatzyView: UIView {
       
       player0.rightAnchor.constraint(equalTo: player1.leftAnchor, constant: -10),
       player0.bottomAnchor.constraint(equalTo: ground.bottomAnchor, constant: -50),
-      
-      enemy4.rightAnchor.constraint(equalTo: list.leftAnchor, constant: -10),
-      enemy4.topAnchor.constraint(equalTo: ground.topAnchor, constant: 50),
       
       enemy3.rightAnchor.constraint(equalTo: enemy4.leftAnchor, constant: -10),
       enemy3.topAnchor.constraint(equalTo: ground.topAnchor, constant: 50),
@@ -463,15 +639,6 @@ class YatzyView: UIView {
       betCount.centerYAnchor.constraint(equalTo: betGround.centerYAnchor),
       betCount.heightAnchor.constraint(equalToConstant: 50),
       betCount.widthAnchor.constraint(equalToConstant: 75),
-      
-      comboGround.centerYAnchor.constraint(equalTo: centerYAnchor),
-      comboGround.centerXAnchor.constraint(equalTo: centerXAnchor),
-      
-      backButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
-      backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-      
-      rightButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-      rightButton.leftAnchor.constraint(equalTo: comboGround.rightAnchor),
       
       cube2.centerYAnchor.constraint(equalTo: centerYAnchor),
       cube2.rightAnchor.constraint(equalTo: centerXAnchor, constant: -50),

@@ -1,6 +1,8 @@
 import UIKit
 
 class BattleView: UIView {
+  private let device = UIDevice()
+  
   public let background: UIImageView = {
     let image = UIImage(named: "BattleBackground")
     let imageView = UIImageView(image: image)
@@ -133,6 +135,7 @@ class BattleView: UIView {
     let button = UIButton()
     button.setBackgroundImage(image, for: .normal)
     button.isEnabled = false
+    button.alpha = 0.5
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
   }()
@@ -146,7 +149,7 @@ class BattleView: UIView {
   
   public let balanceLabel: UILabel = {
     let label = UILabel()
-    label.text = "27 500"
+    label.text = "\(MainData.shared.coins)"
     label.font = UIFont(name: "Papyrus", size: 16)
     label.textColor = #colorLiteral(red: 0.4468473792, green: 0.3058497608, blue: 0.1608744562, alpha: 1)
     label.textAlignment = .right
@@ -178,7 +181,7 @@ class BattleView: UIView {
   
   public let betCount: UITextField = {
     let textField = UITextField()
-    textField.text = "1000"
+    textField.text = "100"
     textField.translatesAutoresizingMaskIntoConstraints = false
     textField.backgroundColor = .clear
     textField.borderStyle = .none
@@ -286,14 +289,50 @@ class BattleView: UIView {
     addSubview(winFrame)
     addSubview(winCount)
     
+    if device.model == .iPhone8 {
+      let constraints = [
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        cardBottomPlace.leftAnchor.constraint(equalTo: cardLeftPlace.centerXAnchor, constant: 5),
+        cardBottomPlace.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -5),
+        
+        ground.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ground.centerXAnchor.constraint(equalTo: centerXAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else if device.model == .iPhone8Plus || device.model == .iPhone11 || device.model == .iPhone14ProMax || device.model == .iPhone12Pro {
+      let constraints = [
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        cardBottomPlace.leftAnchor.constraint(equalTo: cardLeftPlace.centerXAnchor, constant: 5),
+        cardBottomPlace.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -5),
+        
+        ground.topAnchor.constraint(equalTo: topAnchor),
+        ground.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ground.centerXAnchor.constraint(equalTo: centerXAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else {
+      let constraints = [
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        
+        cardBottomPlace.leftAnchor.constraint(equalTo: cardLeftPlace.centerXAnchor, constant: 5),
+        cardBottomPlace.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+        
+        ground.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ground.centerXAnchor.constraint(equalTo: centerXAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    }
+    
     let constraints = [
       background.rightAnchor.constraint(equalTo: rightAnchor),
       background.leftAnchor.constraint(equalTo: leftAnchor),
       background.topAnchor.constraint(equalTo: topAnchor),
       background.bottomAnchor.constraint(equalTo: bottomAnchor),
-      
-      ground.centerYAnchor.constraint(equalTo: centerYAnchor),
-      ground.centerXAnchor.constraint(equalTo: centerXAnchor),
       
       cardDeck.centerYAnchor.constraint(equalTo: centerYAnchor),
       cardDeck.rightAnchor.constraint(equalTo: centerXAnchor, constant: -75),
@@ -324,9 +363,6 @@ class BattleView: UIView {
       cardTopPlace.leftAnchor.constraint(equalTo: cardLeftPlace.centerXAnchor, constant: 5),
       cardTopPlace.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: -10),
       
-      cardBottomPlace.leftAnchor.constraint(equalTo: cardLeftPlace.centerXAnchor, constant: 5),
-      cardBottomPlace.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-      
       cardFromTop.centerYAnchor.constraint(equalTo: cardTopPlace.centerYAnchor),
       cardFromTop.centerXAnchor.constraint(equalTo: cardTopPlace.centerXAnchor),
       
@@ -344,9 +380,6 @@ class BattleView: UIView {
       
       bottomCount.centerXAnchor.constraint(equalTo: bottomCounter.centerXAnchor),
       bottomCount.centerYAnchor.constraint(equalTo: bottomCounter.centerYAnchor),
-      
-      pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
-      pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
       
       balanceGround.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor),
       balanceGround.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),

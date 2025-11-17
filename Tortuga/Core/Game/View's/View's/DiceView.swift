@@ -1,6 +1,8 @@
 import UIKit
 
 class DiceView: UIView {
+  private let device = UIDevice()
+  
   public let background: UIImageView = {
     let image = UIImage(named: "DiceBackground")
     let imageView = UIImageView(image: image)
@@ -34,7 +36,7 @@ class DiceView: UIView {
   
   public let balanceLabel: UILabel = {
     let label = UILabel()
-    label.text = "27 500"
+    label.text = "\(MainData.shared.coins)"
     label.font = UIFont(name: "Papyrus", size: 16)
     label.textColor = #colorLiteral(red: 0.4468473792, green: 0.3058497608, blue: 0.1608744562, alpha: 1)
     label.textAlignment = .right
@@ -66,7 +68,7 @@ class DiceView: UIView {
   
   public let betCount: UITextField = {
     let textField = UITextField()
-    textField.text = "1000"
+    textField.text = "100"
     textField.translatesAutoresizingMaskIntoConstraints = false
     textField.backgroundColor = .clear
     textField.borderStyle = .none
@@ -116,6 +118,7 @@ class DiceView: UIView {
     let image = UIImage(named: "UnderDice")
     let imageView = UIImageView(image: image)
     imageView.isHidden = true
+    imageView.alpha = 0
     imageView.layer.compositingFilter = "multiplyBlendMode"
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView
@@ -125,6 +128,7 @@ class DiceView: UIView {
     let image = UIImage(named: "UnderDice")
     let imageView = UIImageView(image: image)
     imageView.isHidden = true
+    imageView.alpha = 0
     imageView.layer.compositingFilter = "multiplyBlendMode"
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView
@@ -167,7 +171,7 @@ class DiceView: UIView {
   }()
   
   public let cube: UIImageView = {
-    let image = UIImage(named: "Cube0")
+    let image = UIImage(named: "Dice0")
     let imageView = UIImageView(image: image)
     imageView.isHidden = true
     imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -178,7 +182,7 @@ class DiceView: UIView {
     let label = UILabel()
     label.text = "1"
     label.font = UIFont(name: "DEATH CROW DEMO", size: 38)
-    label.textColor = #colorLiteral(red: 0.9868989426, green: 0.6528094444, blue: 0.1398208843, alpha: 1)
+    label.textColor = #colorLiteral(red: 0.4470588235, green: 0.2156862745, blue: 0.03529411765, alpha: 1)
     label.textAlignment = .center
     label.isHidden = true
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -318,20 +322,31 @@ class DiceView: UIView {
     addSubview(winFrame)
     addSubview(winCount)
     
+    if device.model == .iPhone8 || device.model == .iPhone8Plus {
+      let constraints = [
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else {
+      let constraints = [
+        pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    }
+    
     let constraints = [
       background.rightAnchor.constraint(equalTo: rightAnchor),
       background.leftAnchor.constraint(equalTo: leftAnchor),
       background.topAnchor.constraint(equalTo: topAnchor),
       background.bottomAnchor.constraint(equalTo: bottomAnchor),
       
-      pauseButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
-      pauseButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-      
       balanceGround.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor),
       balanceGround.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
       
-      betGround.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-      betGround.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+      betGround.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      betGround.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
       
       betLabel.leftAnchor.constraint(equalTo: betGround.leftAnchor, constant: 15),
       betLabel.bottomAnchor.constraint(equalTo: betGround.topAnchor, constant: 15),
@@ -364,11 +379,11 @@ class DiceView: UIView {
       bidButton.centerXAnchor.constraint(equalTo: centerXAnchor),
       bidButton.bottomAnchor.constraint(equalTo: bottomAnchor),
       
-      cubeGround.centerYAnchor.constraint(equalTo: bidGround.centerYAnchor, constant: 10),
-      cubeGround.leftAnchor.constraint(equalTo: bidGround.centerXAnchor, constant: 10),
+      cubeGround.centerYAnchor.constraint(equalTo: bidGround.centerYAnchor, constant: 0),
+      cubeGround.leftAnchor.constraint(equalTo: bidGround.centerXAnchor, constant: 19.5),
       
-      countGround.centerYAnchor.constraint(equalTo: bidGround.centerYAnchor, constant: 10),
-      countGround.rightAnchor.constraint(equalTo: bidGround.centerXAnchor, constant: -10),
+      countGround.centerYAnchor.constraint(equalTo: bidGround.centerYAnchor, constant: 0),
+      countGround.rightAnchor.constraint(equalTo: bidGround.centerXAnchor, constant: -12.5),
       
       cubeUpButton.centerXAnchor.constraint(equalTo: cubeGround.centerXAnchor),
       cubeUpButton.bottomAnchor.constraint(equalTo: cubeGround.topAnchor, constant: -10),
@@ -382,8 +397,8 @@ class DiceView: UIView {
       countDownButton.centerXAnchor.constraint(equalTo: countGround.centerXAnchor),
       countDownButton.topAnchor.constraint(equalTo: countGround.bottomAnchor, constant: 10),
       
-      cube.centerXAnchor.constraint(equalTo: cubeGround.centerXAnchor),
-      cube.centerYAnchor.constraint(equalTo: cubeGround.centerYAnchor),
+      cube.centerXAnchor.constraint(equalTo: cubeGround.centerXAnchor, constant: 2.5),
+      cube.centerYAnchor.constraint(equalTo: cubeGround.centerYAnchor, constant: 2.5),
       cube.heightAnchor.constraint(equalToConstant: 50),
       cube.widthAnchor.constraint(equalToConstant: 50),
       

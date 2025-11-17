@@ -32,14 +32,21 @@ class BattleViewController: UIViewController {
     setupTargets()
     setupDelegate()
     
-    startGame()
-    setupCardDeck()
-    
-    setupBalance()
-    setupStartBet()
-    
-    animateBattle(entrySize: 0.1, entryDuration: 0.01)
-    animateResult(entrySize: 0.1, entryDuration: 0.01)
+    if battleView.betCount.text != nil && Int(battleView.betCount.text!) != nil {
+      if MainData.shared.coins > 0 && Int(battleView.betCount.text!)! != 0 {
+        startGame()
+        setupCardDeck()
+        
+        setupBalance()
+        setupStartBet()
+        
+        animateBattle(entrySize: 0.1, entryDuration: 0.01)
+        animateResult(entrySize: 0.1, entryDuration: 0.01)
+      } else {
+        battleView.pauseButton.isEnabled = true
+        battleView.pauseButton.alpha = 1
+      }
+    }
   }
   
   private func setupController() {
@@ -119,23 +126,33 @@ class BattleViewController: UIViewController {
   }
   
   @objc func dropCard() {
-    if topCards.count > 0 && bottomCards.count > 0 {
-      animateBottomCard()
-      
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-        self?.enemyDropCard()
+    if battleView.betCount.text != nil && Int(battleView.betCount.text!) != nil {
+      if Int(battleView.betCount.text!)! != 0 {
+        if topCards.count > 0 && bottomCards.count > 0 {
+          animateBottomCard()
+          
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            self?.enemyDropCard()
+          }
+          
+          if bottomCards.count < 13 {
+            battleView.cardBottomPlace.setBackgroundImage(UIImage(named: "VerticalCard"), for: .normal)
+          }
+          
+          if bottomCards.count == 1 {
+            battleView.cardBottomPlace.setBackgroundImage(UIImage(named: "UnderVerticalCard"), for: .normal)
+            battleView.cardBottomPlace.layer.compositingFilter = "multiplyBlendMode"
+          }
+        } else {
+          print("end game")
+        }
+        
+        if battleView.betCount.isEnabled == true {
+          battleView.betCount.isEnabled = false
+          
+          getBet()
+        }
       }
-      
-      if bottomCards.count < 13 {
-        battleView.cardBottomPlace.setBackgroundImage(UIImage(named: "VerticalCard"), for: .normal)
-      }
-      
-      if bottomCards.count == 0 {
-        battleView.cardBottomPlace.setBackgroundImage(UIImage(named: "UnderVerticalCard"), for: .normal)
-        battleView.cardBottomPlace.layer.compositingFilter = "multiplyBlendMode"
-      }
-    } else {
-      print("end game")
     }
   }
   
@@ -146,7 +163,7 @@ class BattleViewController: UIViewController {
       battleView.cardTopPlace.image = UIImage(named: "VerticalCard")
     }
     
-    if topCards.count == 0 {
+    if topCards.count == 1 {
       battleView.cardTopPlace.image = UIImage(named: "UnderVerticalCard")
       battleView.cardTopPlace.layer.compositingFilter = "multiplyBlendMode"
     }
@@ -390,10 +407,8 @@ class BattleViewController: UIViewController {
       battleView.cardDeck.image = UIImage(named: "UnderHorizontalCard")
       battleView.cardDeck.layer.compositingFilter = "multiplyBlendMode"
       
-      battleView.betCount.isEnabled = false
-      
-      getBet()
       battleView.pauseButton.isEnabled = true
+      battleView.pauseButton.alpha = 1
       battleView.cardBottomPlace.isEnabled = true
     }
   }
@@ -450,10 +465,10 @@ class BattleViewController: UIViewController {
   }
   
   private func setupStartBet() {
-    if MainData.shared.coins < 1000 {
+    if MainData.shared.coins < 100 {
       battleView.betCount.text = "\(MainData.shared.coins)"
     } else {
-      battleView.betCount.text = "1000"
+      battleView.betCount.text = "100"
     }
   }
   
@@ -464,6 +479,9 @@ class BattleViewController: UIViewController {
       MainData.shared.coins -= BattleData.shared.battleBet
       setupBalance()
     }
+    UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
+    battleView.betGround.alpha = 0.5
+    battleView.betCount.alpha = 0.5
   }
   
   private func animateBottomCard() {
@@ -728,6 +746,7 @@ class BattleViewController: UIViewController {
     }
     
     animateResult(entrySize: 10, entryDuration: 1.5)
+    UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
   }
   
   private func animateResult(entrySize: CGFloat, entryDuration: Double) {

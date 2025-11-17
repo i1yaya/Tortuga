@@ -5,9 +5,9 @@ final class NavigationViewController: UITabBarController {
     super.viewDidLoad()
     setupTabBar()
     
-    MusicPlayer.shared.backgroundMusic()
-    
     tabBar.isHidden = true
+    
+    MusicPlayer.shared.backgroundMusic()
   }
   
   private func setupTabBar() {

@@ -1,9 +1,12 @@
 import UIKit
 
 class MainView: UIView {
+  private let device = UIDevice()
+  
   public let background: UIImageView = {
     let image = UIImage(named: "MainBackground")
     let imageView = UIImageView(image: image)
+    imageView.contentMode = .scaleAspectFill
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView
   }()
@@ -285,6 +288,22 @@ class MainView: UIView {
     return button
   }()
   
+  public let light0: UIImageView = {
+    let image = UIImage(named: "Lock")
+    let imageView = UIImageView(image: image)
+    imageView.isHidden = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
+  }()
+  
+  public let light1: UIImageView = {
+    let image = UIImage(named: "Lock")
+    let imageView = UIImageView(image: image)
+    imageView.isHidden = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
+  }()
+  
   public let mediumButton: UIButton = {
     let image = UIImage(named: "MediumButton")
     let button = UIButton()
@@ -295,6 +314,22 @@ class MainView: UIView {
     return button
   }()
   
+  public let medium0: UIImageView = {
+    let image = UIImage(named: "Lock")
+    let imageView = UIImageView(image: image)
+    imageView.isHidden = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
+  }()
+  
+  public let medium1: UIImageView = {
+    let image = UIImage(named: "Lock")
+    let imageView = UIImageView(image: image)
+    imageView.isHidden = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
+  }()
+  
   public let hardButton: UIButton = {
     let image = UIImage(named: "HardButton")
     let button = UIButton()
@@ -303,6 +338,57 @@ class MainView: UIView {
     button.isHidden = true
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
+  }()
+  
+  public let hard0: UIImageView = {
+    let image = UIImage(named: "Lock")
+    let imageView = UIImageView(image: image)
+    imageView.isHidden = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
+  }()
+  
+  public let hard1: UIImageView = {
+    let image = UIImage(named: "Lock")
+    let imageView = UIImageView(image: image)
+    imageView.isHidden = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
+  }()
+  
+  public let noMoneyGround: UIImageView = {
+    let image = UIImage(named: "PauseBackground")
+    let imageView = UIImageView(image: image)
+    imageView.alpha = 0.9
+    imageView.isHidden = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
+  }()
+  
+  public let noMoneyButton: UIButton = {
+    let image = UIImage(named: "MenuButton")
+    let button = UIButton()
+    button.setBackgroundImage(image, for: .normal)
+    button.isHidden = true
+    button.translatesAutoresizingMaskIntoConstraints = false
+    return button
+  }()
+  
+  public let noMoneyBackButton: UIButton = {
+    let image = UIImage(named: "BackButton")
+    let button = UIButton()
+    button.setBackgroundImage(image, for: .normal)
+    button.isHidden = true
+    button.translatesAutoresizingMaskIntoConstraints = false
+    return button
+  }()
+  
+  public let noMoneyImage: UIImageView = {
+    let image = UIImage(named: "NoMoneyImage0")
+    let imageView = UIImageView(image: image)
+    imageView.isHidden = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
   }()
   
   override init(frame: CGRect) {
@@ -352,6 +438,63 @@ class MainView: UIView {
     addSubview(lightButton)
     addSubview(mediumButton)
     addSubview(hardButton)
+    addSubview(light0)
+    addSubview(light1)
+    addSubview(medium0)
+    addSubview(medium1)
+    addSubview(hard0)
+    addSubview(hard1)
+    addSubview(noMoneyGround)
+    addSubview(noMoneyButton)
+    addSubview(noMoneyBackButton)
+    addSubview(noMoneyImage)
+    
+    if device.model == .iPhone8 {
+      let constraints = [
+        helpButton.centerXAnchor.constraint(equalTo: logo.centerXAnchor),
+        helpButton.topAnchor.constraint(equalTo: list.bottomAnchor, constant: -10),
+        
+        diceButton.topAnchor.constraint(equalTo: topAnchor, constant: -15),
+        diceButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+        
+        yatzyButton.centerXAnchor.constraint(equalTo: centerXAnchor, constant: 5),
+        yatzyButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+        
+        noMoneyBackButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        noMoneyBackButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else if device.model == .iPhoneX {
+      let constraints = [
+        helpButton.centerXAnchor.constraint(equalTo: logo.centerXAnchor),
+        helpButton.topAnchor.constraint(equalTo: list.bottomAnchor, constant: -10),
+        
+        diceButton.topAnchor.constraint(equalTo: topAnchor, constant: -15),
+        diceButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+        
+        yatzyButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+        yatzyButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+        
+        noMoneyBackButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        noMoneyBackButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else {
+      let constraints = [
+        helpButton.centerXAnchor.constraint(equalTo: logo.centerXAnchor),
+        helpButton.topAnchor.constraint(equalTo: list.bottomAnchor),
+        
+        diceButton.topAnchor.constraint(equalTo: topAnchor),
+        diceButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+        
+        yatzyButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+        yatzyButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+        
+        noMoneyBackButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        noMoneyBackButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    }
     
     let constraints = [
       background.rightAnchor.constraint(equalTo: rightAnchor),
@@ -364,9 +507,6 @@ class MainView: UIView {
       
       list.centerXAnchor.constraint(equalTo: logo.centerXAnchor),
       list.topAnchor.constraint(equalTo: logo.bottomAnchor),
-      
-      helpButton.centerXAnchor.constraint(equalTo: logo.centerXAnchor),
-      helpButton.topAnchor.constraint(equalTo: list.bottomAnchor),
       
       settingButton.centerXAnchor.constraint(equalTo: logo.centerXAnchor),
       settingButton.centerYAnchor.constraint(equalTo: helpButton.bottomAnchor),
@@ -385,12 +525,6 @@ class MainView: UIView {
       
       wheelButton.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor),
       wheelButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-      
-      yatzyButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-      yatzyButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-      
-      diceButton.topAnchor.constraint(equalTo: topAnchor),
-      diceButton.centerXAnchor.constraint(equalTo: centerXAnchor),
       
       battleButton.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor),
       battleButton.centerYAnchor.constraint(equalTo: diceButton.centerYAnchor),
@@ -462,11 +596,40 @@ class MainView: UIView {
       mediumButton.centerXAnchor.constraint(equalTo: centerXAnchor),
       mediumButton.centerYAnchor.constraint(equalTo: centerYAnchor),
       
+      medium0.centerYAnchor.constraint(equalTo: mediumButton.centerYAnchor),
+      medium0.leftAnchor.constraint(equalTo: mediumButton.leftAnchor, constant: 10),
+      
+      medium1.centerYAnchor.constraint(equalTo: mediumButton.centerYAnchor),
+      medium1.rightAnchor.constraint(equalTo: mediumButton.rightAnchor, constant: -10),
+      
       lightButton.centerXAnchor.constraint(equalTo: centerXAnchor),
       lightButton.bottomAnchor.constraint(equalTo: mediumButton.topAnchor, constant: -5),
       
+      light0.centerYAnchor.constraint(equalTo: lightButton.centerYAnchor),
+      light0.leftAnchor.constraint(equalTo: lightButton.leftAnchor, constant: 10),
+      
+      light1.centerYAnchor.constraint(equalTo: lightButton.centerYAnchor),
+      light1.rightAnchor.constraint(equalTo: lightButton.rightAnchor, constant: -10),
+      
       hardButton.centerXAnchor.constraint(equalTo: centerXAnchor),
       hardButton.topAnchor.constraint(equalTo: mediumButton.bottomAnchor, constant: 5),
+      
+      hard0.centerYAnchor.constraint(equalTo: hardButton.centerYAnchor),
+      hard0.leftAnchor.constraint(equalTo: hardButton.leftAnchor, constant: 10),
+      
+      hard1.centerYAnchor.constraint(equalTo: hardButton.centerYAnchor),
+      hard1.rightAnchor.constraint(equalTo: hardButton.rightAnchor, constant: -10),
+      
+      noMoneyGround.rightAnchor.constraint(equalTo: rightAnchor),
+      noMoneyGround.leftAnchor.constraint(equalTo: leftAnchor),
+      noMoneyGround.topAnchor.constraint(equalTo: topAnchor),
+      noMoneyGround.bottomAnchor.constraint(equalTo: bottomAnchor),
+      
+      noMoneyButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+      noMoneyButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+      
+      noMoneyImage.centerYAnchor.constraint(equalTo: centerYAnchor),
+      noMoneyImage.centerXAnchor.constraint(equalTo: centerXAnchor),
     ]
     NSLayoutConstraint.activate(constraints)
   }

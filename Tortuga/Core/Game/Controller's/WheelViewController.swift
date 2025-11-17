@@ -2,6 +2,7 @@ import UIKit
 
 class WheelViewController: UIViewController {
   private var wheelView: WheelView!
+  private let device = UIDevice()
   
   public var selected: Int = 1
   
@@ -79,6 +80,13 @@ class WheelViewController: UIViewController {
       wheelView.wheel1.image = UIImage(named: "Wheel1Lock")
       wheelView.wheel2.image = UIImage(named: "Wheel2Lock")
       
+      if device.model == .iPhone8 || device.model == .iPhone8Plus {
+        let constraints = [
+          wheelView.mediumButton.widthAnchor.constraint(equalToConstant: 194 * 0.75),
+          wheelView.mediumButton.heightAnchor.constraint(equalToConstant: 172 * 0.75),
+        ]
+        NSLayoutConstraint.activate(constraints)
+      } 
     case 1:
       wheelView.mediumButton.image = UIImage(named: "Medium")
       
@@ -89,6 +97,14 @@ class WheelViewController: UIViewController {
       wheelView.wheel0.image = UIImage(named: "Wheel0")
       wheelView.wheel1.image = UIImage(named: "Wheel1")
       wheelView.wheel2.image = UIImage(named: "Wheel2Lock")
+      
+      if device.model == .iPhone8 || device.model == .iPhone8Plus {
+        let constraints = [
+          wheelView.mediumButton.widthAnchor.constraint(equalToConstant: 255 * 0.75),
+          wheelView.mediumButton.heightAnchor.constraint(equalToConstant: 171 * 0.75),
+        ]
+        NSLayoutConstraint.activate(constraints)
+      }
     case 2:
       wheelView.mediumButton.image = UIImage(named: "Hard")
       
@@ -99,6 +115,14 @@ class WheelViewController: UIViewController {
       wheelView.wheel0.image = UIImage(named: "Wheel0")
       wheelView.wheel1.image = UIImage(named: "Wheel1")
       wheelView.wheel2.image = UIImage(named: "Wheel2")
+      
+      if device.model == .iPhone8 || device.model == .iPhone8Plus {
+        let constraints = [
+          wheelView.mediumButton.widthAnchor.constraint(equalToConstant: 183 * 0.75),
+          wheelView.mediumButton.heightAnchor.constraint(equalToConstant: 175 * 0.75),
+        ]
+        NSLayoutConstraint.activate(constraints)
+      }
     default:
       print("Error: unwoned")
     }
@@ -263,24 +287,33 @@ class WheelViewController: UIViewController {
     }
     
     if selected == 0 {
-      MainData.shared.coins -= 250
-      lightSpin()
+      if MainData.shared.coins >= 250 {
+        MainData.shared.coins -= 250
+        UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
+        lightSpin()
+      }
     } else if selected == 1 {
-      MainData.shared.coins -= 500
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-        self?.lightSpin()
+      if MainData.shared.coins >= 500 {
+        MainData.shared.coins -= 500
+        UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-          self?.mediumSpin()
+          self?.lightSpin()
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            self?.mediumSpin()
+          }
         }
       }
     } else if selected == 2 {
-      MainData.shared.coins -= 1000
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-        self?.lightSpin()
+      if MainData.shared.coins >= 1000 {
+        MainData.shared.coins -= 1000
+        UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-          self?.mediumSpin()
+          self?.lightSpin()
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            self?.hardSpin()
+            self?.mediumSpin()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+              self?.hardSpin()
+            }
           }
         }
       }
@@ -319,11 +352,34 @@ class WheelViewController: UIViewController {
       wheelView.winCount.isHidden = false
       
       MainData.shared.coins += score
+      UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
     } else {
       wheelView.result.isHidden = false
       wheelView.result.image = UIImage(named: "WheelLoseScreen")
       wheelView.menuButton.isHidden = false
       wheelView.menuButton.setBackgroundImage(UIImage(named: "MenuButton"), for: .normal)
+      switch selected {
+      case 0:
+        if MainData.shared.coins < 250 {
+          wheelView.restartButton.isEnabled = false
+        } else {
+          wheelView.restartButton.isEnabled = true
+        }
+      case 1:
+        if MainData.shared.coins < 500 {
+          wheelView.restartButton.isEnabled = false
+        } else {
+          wheelView.restartButton.isEnabled = true
+        }
+      case 2:
+        if MainData.shared.coins < 1000 {
+          wheelView.restartButton.isEnabled = false
+        } else {
+          wheelView.restartButton.isEnabled = true
+        }
+      default:
+        print("Error: unwoned")
+      }
       wheelView.restartButton.isHidden = false
       wheelView.restartButton.setBackgroundImage(UIImage(named: "RestartButton"), for: .normal)
     }

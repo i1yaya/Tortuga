@@ -4,16 +4,17 @@ class YatzyViewController: UIViewController {
   private var yatzyView: YatzyView!
   private var pauseView: PauseView!
   
-  private var selectedCombo: Int = 0
-  private var selected: Int = -1
-  
   private var comboNames: [String] = ["Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "Sum", "Bonus", "Three of a kind", "Four of a kind", "Full house", "Small straight", "Large straight", "Chance", "Yatzy", "Total score"]
+  
+  private var selectedCombo: Int = 0
+  private var playerSelected: Int = -1
+  private var enemySelected: Int = -1
   
   private var playerScores: [Int] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   private var enemyScores: [Int] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   
-  private var playerTakeScores: [Int] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  private var enemyTakeScores: [Int] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  private var playerTakeScores: [Bool] = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
+  private var enemyTakeScores: [Bool] = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
   
   private var playerScore: Int = 0
   private var enemyScore: Int = 0
@@ -25,6 +26,7 @@ class YatzyViewController: UIViewController {
   private var turnNumber: Int = 0
   
   private var rollCount: Int = 0
+  private var onBoard: Bool = false
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
@@ -100,6 +102,7 @@ class YatzyViewController: UIViewController {
     yatzyView.rollButton.addTarget(self, action: #selector(rollAction), for: .touchUpInside)
     yatzyView.menuButton.addTarget(self, action: #selector(menuAction), for: .touchUpInside)
     yatzyView.restartButton.addTarget(self, action: #selector(restartAction), for: .touchUpInside)
+    yatzyView.yatzyBackButton.addTarget(self, action: #selector(menuAction), for: .touchUpInside)
     
     let cubes = [yatzyView.cube0, yatzyView.cube1, yatzyView.cube2, yatzyView.cube3, yatzyView.cube4]
     
@@ -211,11 +214,32 @@ class YatzyViewController: UIViewController {
       cube.isHidden = false
     }
     
+    rollCubes = [0, 0, 0, 0, 0]
+    takeCubes = [0, 0, 0, 0, 0]
+    rollCount = 0
+    
     viewDidLoad()
     
     rollCubes = [0, 0, 0, 0, 0]
     takeCubes = [0, 0, 0, 0, 0]
     rollCount = 0
+    
+    for i in 0...comboNames.count - 1 {
+      playerScores[i] = 0
+      enemyScores[i] = 0
+      playerTakeScores[i] = false
+      enemyTakeScores[i] = false
+    }
+    
+    turnNumber = 0
+    turn = .player
+    
+    selectedCombo = 0
+    playerSelected = -1
+    enemySelected = -1
+    
+    playerScore = 0
+    enemyScore = 0
   }
   
   @objc func enemyRollAction() {
@@ -225,23 +249,26 @@ class YatzyViewController: UIViewController {
     rollCount += 1
     
     if rollCount <= 5 {
-      if enemyScores[13] == 0 {
+      if onBoard == false {
         animateEnemyRoll(entrySize: 0.2, entryDuration: 1.5, entryPosition: 500)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
           self?.checkEnemyCombo()
         }
+        onBoard = true
       } else {
         for index in 0...enemyScores.count - 2 {
-          enemyScores[index] = 0
+          if enemyTakeScores[index] != true {
+            enemyScores[index] = 0
+          }
         }
         
         animateEnemyRoll(entrySize: 5, entryDuration: 1.5, entryPosition: -100)
-        enemyScores[13] = 0
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
           self?.enemyRollAction()
         }
+        onBoard = false
       }
       
       if rollCount == 5 {
@@ -260,7 +287,7 @@ class YatzyViewController: UIViewController {
     rollCount += 1
     
     if rollCount <= 5 {
-      if playerScores[13] == 0 {
+      if onBoard == false {
         yatzyView.rollButton.isEnabled = false
         
         let cubes = [yatzyView.cube0, yatzyView.cube1, yatzyView.cube2, yatzyView.cube3, yatzyView.cube4]
@@ -273,19 +300,22 @@ class YatzyViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
           self?.checkCombo()
         }
+        onBoard = true
       } else {
-        for index in 0...playerScores.count - 1 {
-          playerScores[index] = 0
+        for index in 0...playerScores.count - 2 {
+          if playerTakeScores[index] != true {
+            playerScores[index] = 0
+          }
         }
         
         yatzyView.rollButton.isEnabled = false
         
         animatePlayerRoll(entrySize: 5, entryDuration: 1.5, entryPosition: 100)
-        playerScores[13] = 0
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
           self?.rollAction()
         }
+        onBoard = false
       }
       if rollCount == 5 {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
@@ -328,21 +358,26 @@ class YatzyViewController: UIViewController {
   }
   
   @objc func startAction() {
-    yatzyView.blurFrame.isHidden.toggle()
-    yatzyView.blurLabel.isHidden.toggle()
-    yatzyView.startButton.isHidden.toggle()
-    yatzyView.balanceGround.isHidden.toggle()
-    yatzyView.betGround.isHidden.toggle()
-    yatzyView.balanceLabel.isHidden.toggle()
-    yatzyView.betCount.isHidden.toggle()
-    
-    for _ in 0...1 {
-      yatzyView.betCount.isEnabled.toggle()
+    if yatzyView.betCount.text != nil && Int(yatzyView.betCount.text!) != nil {
+      if MainData.shared.coins > 0 && Int(yatzyView.betCount.text!)! != 0 {
+        yatzyView.yatzyBackButton.isHidden.toggle()
+        yatzyView.blurFrame.isHidden.toggle()
+        yatzyView.blurLabel.isHidden.toggle()
+        yatzyView.startButton.isHidden.toggle()
+        yatzyView.balanceGround.isHidden.toggle()
+        yatzyView.betGround.isHidden.toggle()
+        yatzyView.balanceLabel.isHidden.toggle()
+        yatzyView.betCount.isHidden.toggle()
+        
+        for _ in 0...1 {
+          yatzyView.betCount.isEnabled.toggle()
+        }
+        
+        getBet()
+        
+        editButtons(value: true)
+      }
     }
-    
-    getBet()
-    
-    editButtons(value: true)
   }
   
   private func setupDelegate() {
@@ -386,10 +421,10 @@ class YatzyViewController: UIViewController {
   }
   
   private func setupStartBet() {
-    if MainData.shared.coins < 1000 {
+    if MainData.shared.coins < 100 {
       yatzyView.betCount.text = "\(MainData.shared.coins)"
     } else {
-      yatzyView.betCount.text = "1000"
+      yatzyView.betCount.text = "100"
     }
   }
   
@@ -400,6 +435,7 @@ class YatzyViewController: UIViewController {
       MainData.shared.coins -= YatzyData.shared.yatzyBet
       setupBalance()
     }
+    UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
   }
   
   private func animateHelp(entrySize: CGFloat, entryDuration: Double) {
@@ -1079,25 +1115,27 @@ class YatzyViewController: UIViewController {
       }
     }
     
-    if numbersCount == [1, 1, 1, 1, 1, 0] {
+    if numbersCount == [1, 1, 1, 1, 1, 0] && enemyTakeScores[11] != true  {
       enemyScores[11] = 30
     }
     
-    if numbersCount == [0, 1, 1, 1, 1, 1] {
+    if numbersCount == [0, 1, 1, 1, 1, 1] && enemyTakeScores[12] != true  {
       enemyScores[12] = 40
     }
     
     for index in 0...numbersCount.count - 1 {
       enemyScores[index] = (index + 1) * numbersCount[index]
-      enemyScores[13] += enemyScores[index]
+      if enemyTakeScores[13] != true {
+        enemyScores[13] += enemyScores[index]
+      }
     }
     
     for index in 0...numbersCount.count - 1 {
-      if numbersCount[index] == 3 {
+      if numbersCount[index] == 3 && enemyTakeScores[8] != true  {
         enemyScores[8] = (index + 1) * 3
-      } else if numbersCount[index] == 4 {
+      } else if numbersCount[index] == 4 && enemyTakeScores[9] != true  {
         enemyScores[9] = (index + 1) * 4
-      } else if numbersCount[index] == 5 {
+      } else if numbersCount[index] == 5 && enemyTakeScores[14] != true  {
         enemyScores[14] = 50
       }
     }
@@ -1105,7 +1143,7 @@ class YatzyViewController: UIViewController {
     for index in 0...numbersCount.count - 1 {
       if numbersCount[index] == 3 {
         for index in 0...numbersCount.count - 1 {
-          if numbersCount[index] == 2 {
+          if numbersCount[index] == 2 && enemyTakeScores[10] != true  {
             enemyScores[10] = 25
           }
         }
@@ -1142,25 +1180,27 @@ class YatzyViewController: UIViewController {
       }
     }
     
-    if numbersCount == [1, 1, 1, 1, 1, 0] {
+    if numbersCount == [1, 1, 1, 1, 1, 0] && playerTakeScores[11] != true {
       playerScores[11] = 30
     }
     
-    if numbersCount == [0, 1, 1, 1, 1, 1] {
+    if numbersCount == [0, 1, 1, 1, 1, 1] && playerTakeScores[12] != true {
       playerScores[12] = 40
     }
     
     for index in 0...numbersCount.count - 1 {
       playerScores[index] = (index + 1) * numbersCount[index]
-      playerScores[13] += playerScores[index]
+      if playerTakeScores[13] != true {
+        playerScores[13] += playerScores[index]
+      }
     }
     
     for index in 0...numbersCount.count - 1 {
-      if numbersCount[index] == 3 {
+      if numbersCount[index] == 3 && playerTakeScores[8] != true  {
         playerScores[8] = (index + 1) * 3
-      } else if numbersCount[index] == 4 {
+      } else if numbersCount[index] == 4 && playerTakeScores[9] != true  {
         playerScores[9] = (index + 1) * 4
-      } else if numbersCount[index] == 5 {
+      } else if numbersCount[index] == 5 && playerTakeScores[14] != true  {
         playerScores[14] = 50
       }
     }
@@ -1168,16 +1208,10 @@ class YatzyViewController: UIViewController {
     for index in 0...numbersCount.count - 1 {
       if numbersCount[index] == 3 {
         for index in 0...numbersCount.count - 1 {
-          if numbersCount[index] == 2 {
+          if numbersCount[index] == 2 && playerTakeScores[10] != true  {
             playerScores[10] = 25
           }
         }
-      }
-    }
-    
-    for index in 0...playerTakeScores.count - 1 {
-      if playerTakeScores[index] != 0 {
-        playerScores[index] = playerTakeScores[index]
       }
     }
     
@@ -1186,18 +1220,16 @@ class YatzyViewController: UIViewController {
   }
   
   private func swapTurn(value: TurnType) {
+    onBoard = false
     if value == .player {
       turn = .enemy
       yatzyView.rollButton.isEnabled = false
       
-      for index in 0...playerScores.count - 1 {
-        if index != playerScores.count - 1 && index != selected {
+      for index in 0...playerScores.count - 2 {
+        if playerTakeScores[index] != true {
           playerScores[index] = 0
+          yatzyView.collectionView.reloadData()
         }
-      }
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-        self?.playerScores[self!.selected] = 0
-        self?.yatzyView.collectionView.reloadData()
       }
       
       for index in 0...takeCubes.count - 1 {
@@ -1235,8 +1267,9 @@ class YatzyViewController: UIViewController {
       turnNumber += 1
       
       for index in 0...enemyScores.count - 1 {
-        if index != enemyScores.count - 1 {
+        if index != enemyScores.count - 1 && enemyTakeScores[index] != true  {
           enemyScores[index] = 0
+          yatzyView.collectionView.reloadData()
         }
       }
       
@@ -1315,6 +1348,7 @@ class YatzyViewController: UIViewController {
     }
     
     animateResult(entrySize: 10, entryDuration: 1.5)
+    UserDefaults.standard.set(MainData.shared.coins, forKey: "coin")
   }
   
   private func animateResult(entrySize: CGFloat, entryDuration: Double) {
@@ -1378,56 +1412,106 @@ class YatzyViewController: UIViewController {
   }
   
   private func enemyCheckCombo() {
-    if enemyScores[14] == 50 {
+    if enemyScores[14] == 50 && enemyTakeScores[14] != true {
       enemyScore += enemyScores[14]
       enemyScores[comboNames.count - 1] += enemyScores[14]
-      enemyTakeScores[comboNames.count - 1] += enemyScores[14]
+      enemyTakeScores[14] = true
+      enemySelected = 14
       
       swapTurn(value: turn)
-    } else if enemyScores[12] == 40 {
+    } else if enemyScores[12] == 40 && enemyTakeScores[12] != true {
       enemyScore += enemyScores[12]
       enemyScores[comboNames.count - 1] += enemyScores[12]
-      enemyTakeScores[comboNames.count - 1] += enemyScores[12]
+      enemyTakeScores[12] = true
+      enemySelected = 12
       
       swapTurn(value: turn)
-    } else if enemyScores[11] == 30 {
+    } else if enemyScores[11] == 30 && enemyTakeScores[11] != true {
       enemyScore += enemyScores[11]
       enemyScores[comboNames.count - 1] += enemyScores[11]
-      enemyTakeScores[comboNames.count - 1] += enemyScores[11]
+      enemyTakeScores[11] = true
+      enemySelected = 11
       
       swapTurn(value: turn)
-    } else if enemyScores[10] == 25 {
+    } else if enemyScores[10] == 25 && enemyTakeScores[10] != true {
       enemyScore += enemyScores[10]
       enemyScores[comboNames.count - 1] += enemyScores[10]
-      enemyTakeScores[comboNames.count - 1] += enemyScores[10]
+      enemyTakeScores[10] = true
+      enemySelected = 10
       
       swapTurn(value: turn)
-    } else if enemyScores[9] != 0 {
+    } else if enemyScores[9] != 0 && enemyTakeScores[9] != true {
       enemyScore += enemyScores[9]
       enemyScores[comboNames.count - 1] += enemyScores[9]
-      enemyTakeScores[comboNames.count - 1] += enemyScores[9]
+      enemyTakeScores[9] = true
+      enemySelected = 9
       
       swapTurn(value: turn)
-    } else if enemyScores[8] != 0 {
+    } else if enemyScores[8] != 0 && enemyTakeScores[8] != true {
       enemyScore += enemyScores[8]
       enemyScores[comboNames.count - 1] += enemyScores[8]
-      enemyTakeScores[comboNames.count - 1] += enemyScores[8]
+      enemyTakeScores[8] = true
+      enemySelected = 8
       
       swapTurn(value: turn)
-    } else if enemyScores[13] + enemyScore > playerScores[comboNames.count - 1] {
+    } else if enemyScores[13] + enemyScore > playerScores[comboNames.count - 1] && enemyTakeScores[13] != true {
       enemyScore += enemyScores[13]
       enemyScores[comboNames.count - 1] += enemyScores[13]
-      enemyTakeScores[comboNames.count - 1] += enemyScores[13]
+      enemyTakeScores[13] = true
+      enemySelected = 13
       
       swapTurn(value: turn)
     } else if rollCount != 5 {
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
         self?.enemyRollAction()
       }
-    } else {
+    } else if enemyTakeScores[13] != true {
       enemyScore += enemyScores[13]
       enemyScores[comboNames.count - 1] += enemyScores[13]
-      enemyTakeScores[comboNames.count - 1] += enemyScores[13]
+      enemyTakeScores[13] = true
+      enemySelected = 13
+      
+      swapTurn(value: turn)
+    } else if enemyScores[0] != 0 && enemyTakeScores[0] != true {
+      enemyScore += enemyScores[0]
+      enemyScores[comboNames.count - 1] += enemyScores[0]
+      enemyTakeScores[0] = true
+      enemySelected = 0
+      
+      swapTurn(value: turn)
+    } else if enemyScores[1] != 0 && enemyTakeScores[1] != true {
+      enemyScore += enemyScores[1]
+      enemyScores[comboNames.count - 1] += enemyScores[1]
+      enemyTakeScores[1] = true
+      enemySelected = 1
+      
+      swapTurn(value: turn)
+    } else if enemyScores[2] != 0 && enemyTakeScores[2] != true {
+      enemyScore += enemyScores[2]
+      enemyScores[comboNames.count - 1] += enemyScores[2]
+      enemyTakeScores[2] = true
+      enemySelected = 2
+      
+      swapTurn(value: turn)
+    } else if enemyScores[3] != 0 && enemyTakeScores[3] != true {
+      enemyScore += enemyScores[3]
+      enemyScores[comboNames.count - 1] += enemyScores[3]
+      enemyTakeScores[3] = true
+      enemySelected = 3
+      
+      swapTurn(value: turn)
+    } else if enemyScores[4] != 0 && enemyTakeScores[4] != true {
+      enemyScore += enemyScores[4]
+      enemyScores[comboNames.count - 1] += enemyScores[4]
+      enemyTakeScores[4] = true
+      enemySelected = 4
+      
+      swapTurn(value: turn)
+    } else if enemyScores[5] != 0 && enemyTakeScores[5] != true {
+      enemyScore += enemyScores[5]
+      enemyScores[comboNames.count - 1] += enemyScores[5]
+      enemyTakeScores[5] = true
+      enemySelected = 5
       
       swapTurn(value: turn)
     }
@@ -1468,23 +1552,48 @@ extension YatzyViewController: UICollectionViewDelegate, UICollectionViewDataSou
       fatalError("init(coder:) has not been implemented")
     }
     
-    if indexPath.row == selected {
+    if indexPath.row == playerSelected {
       cell.playerCheck.image = UIImage(named: "Check1")
       cell.playerCheck.isHidden = false
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-        cell.playerCheck.isHidden = true
-        cell.playerCheck.image = UIImage(named: "Check0")
-        self?.selected = -1
+        self?.playerSelected = -1
       }
     } else {
       if playerScores[indexPath.row] != 0 && indexPath.row != comboNames.count - 1 {
         cell.playerCheck.isHidden = false
         cell.playerCheck.image = UIImage(named: "Check0")
       } else {
-        if indexPath.row != selected {
+        if indexPath.row != playerSelected {
           cell.playerCheck.isHidden = true
         }
       }
+    }
+    
+    if playerTakeScores[indexPath.row] {
+      cell.playerCheck.image = UIImage(named: "Check1")
+      cell.playerCheck.isHidden = false
+    }
+    
+    if indexPath.row == enemySelected {
+      cell.enemyCheck.image = UIImage(named: "Check1")
+      cell.enemyCheck.isHidden = false
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+        self?.enemySelected = -1
+      }
+    } else {
+      if enemyScores[indexPath.row] != 0 && indexPath.row != comboNames.count - 1 {
+        cell.enemyCheck.isHidden = false
+        cell.enemyCheck.image = UIImage(named: "Check0")
+      } else {
+        if indexPath.row != enemySelected {
+          cell.enemyCheck.isHidden = true
+        }
+      }
+    }
+    
+    if enemyTakeScores[indexPath.row] {
+      cell.enemyCheck.image = UIImage(named: "Check1")
+      cell.enemyCheck.isHidden = false
     }
     
     if playerScores[indexPath.row] != 0 && indexPath.row != comboNames.count - 1 {
@@ -1494,7 +1603,7 @@ extension YatzyViewController: UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     if enemyScores[indexPath.row] != 0 && indexPath.row != comboNames.count - 1 {
-      cell.enemy.textColor = #colorLiteral(red: 0.3098039329, green: 0.01568627544, blue: 0.1294117719, alpha: 1)
+      cell.enemy.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
     } else {
       cell.enemy.textColor = #colorLiteral(red: 0.1725490196, green: 0.1490196078, blue: 0.1490196078, alpha: 1)
     }
@@ -1513,12 +1622,14 @@ extension YatzyViewController: UICollectionViewDelegate, UICollectionViewDataSou
   
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     if turn == .player {
-      playerScores[comboNames.count - 1] += playerScores[indexPath.row]
-      playerTakeScores[comboNames.count - 1] += playerScores[indexPath.row]
-      
-      selected = indexPath.row
-      swapTurn(value: turn)
-      collectionView.reloadData()
+      if playerScores[indexPath.row] != 0 && indexPath.row != comboNames.count - 1 && playerTakeScores[indexPath.row] != true {
+        playerScores[comboNames.count - 1] += playerScores[indexPath.row]
+        playerTakeScores[indexPath.row] = true
+        
+        playerSelected = indexPath.row
+        swapTurn(value: turn)
+        collectionView.reloadData()
+      }
     }
   }
   

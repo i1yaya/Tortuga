@@ -1,6 +1,8 @@
 import UIKit
 
 class WheelView: UIView {
+  private let device = UIDevice()
+  
   public let background: UIImageView = {
     let image = UIImage(named: "WheelBackground")
     let imageView = UIImageView(image: image)
@@ -169,23 +171,41 @@ class WheelView: UIView {
     addSubview(winFrame)
     addSubview(winCount)
     
+    if device.model == .iPhone8 || device.model == .iPhone8Plus {
+      let constraints = [
+        spinButton.centerYAnchor.constraint(equalTo: wheel2.centerYAnchor),
+        spinButton.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor),
+        spinButton.widthAnchor.constraint(equalToConstant: 236 * 0.75),
+        spinButton.heightAnchor.constraint(equalToConstant: 120 * 0.75),
+        
+        backButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15),
+        backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    } else {
+      let constraints = [
+        spinButton.centerYAnchor.constraint(equalTo: wheel2.centerYAnchor),
+        spinButton.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor),
+        spinButton.widthAnchor.constraint(equalToConstant: 236),
+        spinButton.heightAnchor.constraint(equalToConstant: 120),
+        
+        backButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
+        backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      ]
+      NSLayoutConstraint.activate(constraints)
+    }
+    
     let constraints = [
       background.rightAnchor.constraint(equalTo: rightAnchor),
       background.leftAnchor.constraint(equalTo: leftAnchor),
       background.topAnchor.constraint(equalTo: topAnchor),
       background.bottomAnchor.constraint(equalTo: bottomAnchor),
       
-      backButton.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
-      backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-      
       price.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor),
       price.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
       
       light.centerYAnchor.constraint(equalTo: mediumButton.centerYAnchor, constant: -5),
       light.rightAnchor.constraint(equalTo: centerXAnchor, constant: -50),
-      
-      spinButton.centerYAnchor.constraint(equalTo: wheel2.centerYAnchor),
-      spinButton.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor),
       
       wheel0.centerYAnchor.constraint(equalTo: wheel2.centerYAnchor),
       wheel0.centerXAnchor.constraint(equalTo: centerXAnchor),

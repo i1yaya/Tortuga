@@ -72,13 +72,17 @@ class YatzyCollectionViewCell: UICollectionViewCell {
       name.leftAnchor.constraint(equalTo: leftAnchor, constant: 50),
       
       playerCheck.centerYAnchor.constraint(equalTo: player.centerYAnchor),
-      playerCheck.centerXAnchor.constraint(equalTo: player.centerXAnchor),
+      playerCheck.centerXAnchor.constraint(equalTo: player.centerXAnchor, constant: 1),
+      playerCheck.heightAnchor.constraint(equalToConstant: 24),
+      playerCheck.widthAnchor.constraint(equalToConstant: 50),
       
       player.centerYAnchor.constraint(equalTo: centerYAnchor),
       player.centerXAnchor.constraint(equalTo: centerXAnchor, constant: 45),
       
       enemyCheck.centerYAnchor.constraint(equalTo: enemy.centerYAnchor),
       enemyCheck.centerXAnchor.constraint(equalTo: enemy.centerXAnchor),
+      enemyCheck.heightAnchor.constraint(equalToConstant: 24),
+      enemyCheck.widthAnchor.constraint(equalToConstant: 50),
       
       enemy.centerYAnchor.constraint(equalTo: centerYAnchor),
       enemy.centerXAnchor.constraint(equalTo: rightAnchor, constant: -50)
